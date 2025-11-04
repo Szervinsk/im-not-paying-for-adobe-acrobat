@@ -1,43 +1,18 @@
 from pypdf import PdfWriter
 import os
 
-def run():
+# A função agora recebe a LISTA de arquivos e o NOME da saída
+def run(lista_de_pdfs, saida_path):
     """
     Função principal para juntar (merge) vários PDFs.
+    Recebe os caminhos como parâmetros.
     """
-    print("\n--- 2. Mesclar arquivos PDF ---")
-    
-    pdfs_para_juntar = []
-    
-    # Loop para adicionar arquivos
-    while True:
-        pdf_name = input("Digite o nome de um PDF (ou 'fim' para parar): ")
-        
-        if pdf_name.lower() == 'fim':
-            break
-            
-        pdf_path = os.path.join('upload', pdf_name)
-        
-        if os.path.exists(pdf_path):
-            pdfs_para_juntar.append(pdf_path)
-            print(f"'{pdf_name}' adicionado à lista.")
-        else:
-            print(f"Aviso: Arquivo '{pdf_path}' não encontrado. Pulando.")
-
-    if len(pdfs_para_juntar) < 2:
-        print("Você precisa de pelo menos 2 arquivos para mesclar.")
-        return
-
-    # Pergunta o nome do arquivo de saída
-    saida_name = input("Digite o nome do arquivo final (ex: documento_juntado.pdf): ")
-    saida_path = os.path.join('upload', saida_name)
-    
-    # --- Início do Merge ---
+    print("Iniciando 'merge'...")
     try:
         merger = PdfWriter()
-        print("Iniciando 'merge'...")
         
-        for pdf in pdfs_para_juntar:
+        for pdf in lista_de_pdfs:
+            print(f"Adicionando '{pdf}'...")
             merger.append(pdf)
         
         merger.write(saida_path)
@@ -45,6 +20,8 @@ def run():
         
         print(f"\n--- SUCESSO! ---")
         print(f"PDFs juntados e salvos como: '{saida_path}'")
+        return True, "Arquivos juntados com sucesso!"
         
     except Exception as e:
         print(f"\nOcorreu um erro durante a mesclagem: {e}")
+        return False, f"Ocorreu um erro: {e}"
